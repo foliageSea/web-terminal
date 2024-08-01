@@ -1,10 +1,8 @@
-name: Go
+name: Go Release
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  release:
+    types: [published]
 
 jobs:
 
@@ -20,13 +18,16 @@ jobs:
 
     - name: Build
       run: go build -o terminal server.go
-    
-    - name: Scp
-      uses: appleboy/scp-action@master
+
+    - name: Add to Release
+      uses: actions/upload-release-asset@v1
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        source: "terminal"
-        target: "/opt/"
+        name: terminal
+        path: terminal
+
+    - name: Set Action Secret
+      env:
+        SECRET_KEY: ${{ secrets.ACCESS_TOKEN  }}
+      run: |
+        # 这里使用密钥进行相关操作
+        echo "The secret key is: $SECRET_KEY"
